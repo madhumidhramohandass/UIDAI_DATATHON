@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Big Data in Action: Uber &amp; Crime Hotspot Mapping</title>
+<style>
+:root{--bg:#fafaf7;--fg:#16181d;--mut:#5d6470;--card:#ffffff;--line:#e3e3dc;--acc:#0b7a5a;--acc2:#d9561f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101214;--fg:#eceae4;--mut:#9aa1ab;--card:#181b1f;--line:#2a2e34;--acc:#3ecf9f;--acc2:#f2814a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101214;--fg:#eceae4;--mut:#9aa1ab;--card:#181b1f;--line:#2a2e34;--acc:#3ecf9f;--acc2:#f2814a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 Georgia,"Times New Roman",serif}
+main{max-width:760px;margin:0 auto;padding:24px 20px 64px}
+nav{display:flex;gap:8px;margin-bottom:28px;font:600 .9rem system-ui,sans-serif}
+nav a{flex:1;text-align:center;padding:10px;border:1px solid var(--line);border-radius:999px;color:var(--mut);text-decoration:none;background:var(--card)}
+nav a.on{background:var(--acc);border-color:var(--acc);color:#fff}
+h1{font:800 clamp(1.8rem,5vw,2.6rem)/1.15 system-ui,-apple-system,"Segoe UI",sans-serif;margin:.2em 0 .3em;letter-spacing:-.02em}
+h2{font:700 1.35rem/1.25 system-ui,-apple-system,"Segoe UI",sans-serif;margin:2.2em 0 .5em}
+.tag{font:600 .78rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--acc)}
+.meta{font:.9rem system-ui,sans-serif;color:var(--mut)}
+.lead{font-size:1.18rem}
+.page{display:none}.page.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:1.2em 0}
+.cap{font:.82rem system-ui,sans-serif;color:var(--mut);margin-top:8px}
+.story{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:1em 0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;font:.92rem/1.45 system-ui,sans-serif}
+.panel p{margin:0;padding:10px 14px 14px}
+.panel b{color:var(--acc)}
+.panel svg{border-bottom:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:1.4em 0}
+.stat{border-left:3px solid var(--acc);padding:2px 12px;font:.9rem/1.4 system-ui,sans-serif;color:var(--mut)}
+.stat b{display:block;font-size:1.05rem;color:var(--fg)}
+.steps{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:600 .85rem system-ui,sans-serif}
+.steps span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.steps i{color:var(--mut);font-style:normal}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font:.9rem system-ui,sans-serif}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut)}
+ul,ol{padding-left:1.2em}li{margin:.35em 0}
+svg{max-width:100%;height:auto;display:block}
+.btns{display:flex;gap:8px;margin-bottom:10px;font:600 .85rem system-ui,sans-serif}
+.btns button{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.btns button.on{background:var(--acc2);border-color:var(--acc2);color:#fff}
+.take{border:2px solid var(--acc);border-radius:14px;padding:6px 18px;margin-top:1.5em}
+footer{margin-top:3em;font:.85rem system-ui,sans-serif;color:var(--mut);border-top:1px solid var(--line);padding-top:14px}
+.a{fill:var(--acc)}.b{fill:var(--acc2)}.m{fill:var(--mut)}.bg{fill:var(--bg)}.o{fill:var(--card);stroke:var(--mut);stroke-width:2}
+.l{fill:none;stroke:var(--mut);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.t{font:600 11px system-ui,sans-serif;fill:var(--fg);text-anchor:middle}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="#uber" id="n-uber">Page 1 · Uber</a><a href="#crime" id="n-crime">Page 2 · Crime Hotspots</a></nav>
+
+<!-- ============ PAGE 1: UBER ============ -->
+<section class="page" id="p-uber">
+<div class="tag">Use Case 1 · Big Data Management</div>
+<h1>Where Is the Next Ride? How Uber Turns Location Data into Decisions</h1>
+<div class="meta">By [Your Name] · [Course / Roll No.] · Nov 2026</div>
+<p class="lead">Every time you open Uber, a system decides in seconds which driver to send, what the price should be, and when you will arrive. Behind that tap sits one of the world’s most location-heavy data platforms.</p>
+
+<h2>The story in 4 frames</h2>
+<div class="story">
+<div class="panel"><svg viewBox="0 0 240 140"><rect class="bg" width="240" height="140"/><circle class="m" cx="45" cy="42" r="12"/><path class="l" d="M45 54v34M45 62l-15 14M45 62l14-6M45 88l-11 28M45 88l11 28"/><rect class="o" x="90" y="22" width="56" height="98" rx="8"/><path class="a" d="M118 48a12 12 0 0 1 12 12c0 10-12 24-12 24s-12-14-12-24a12 12 0 0 1 12-12z"/><circle class="bg" cx="118" cy="60" r="4"/><rect class="b" x="102" y="98" width="32" height="14" rx="7"/><rect class="o" x="158" y="30" width="74" height="30" rx="8"/><text class="t" x="195" y="49">Late for class!</text></svg><p><b>1. The tap.</b> Meera is late for college and requests a ride. Her phone sends her exact location.</p></div>
+<div class="panel"><svg viewBox="0 0 240 140"><rect class="bg" width="240" height="140"/><rect class="o" x="14" y="40" width="36" height="62" rx="6"/><circle class="a" cx="32" cy="66" r="5"/><path class="l" stroke-dasharray="3 6" d="M58 70H92M148 70H178"/><ellipse class="o" cx="118" cy="74" rx="26" ry="16"/><ellipse class="o" cx="104" cy="64" rx="14" ry="11"/><ellipse class="o" cx="130" cy="62" rx="16" ry="12"/><ellipse class="o" cx="190" cy="56" rx="22" ry="8"/><rect class="o" x="168" y="56" width="44" height="40"/><ellipse class="o" cx="190" cy="96" rx="22" ry="8"/><text class="t" x="32" y="120">GPS</text><text class="t" x="118" y="120">Streaming</text><text class="t" x="190" y="120">Data lake</text></svg><p><b>2. The data flows.</b> Her ping, thousands of drivers’ pings and traffic data stream into the platform.</p></div>
+<div class="panel"><svg viewBox="0 0 240 140" id="flower"><rect class="bg" width="240" height="140"/></svg><p><b>3. The map thinks.</b> The city is split into hexagons. A busy cell near Meera glows darker, so demand beats supply there.</p></div>
+<div class="panel"><svg viewBox="0 0 240 140"><rect class="bg" width="240" height="140"/><path class="l" stroke-dasharray="8 6" d="M12 108H228"/><rect class="a" x="28" y="82" width="64" height="20" rx="7"/><rect class="a" x="42" y="68" width="36" height="18" rx="6"/><circle class="m" cx="46" cy="104" r="8"/><circle class="m" cx="76" cy="104" r="8"/><path class="b" d="M200 60a14 14 0 0 1 14 14c0 12-14 28-14 28s-14-16-14-28a14 14 0 0 1 14-14z"/><circle class="bg" cx="200" cy="74" r="5"/><rect class="o" x="104" y="26" width="76" height="28" rx="8"/><text class="t" x="142" y="44">Arrives in 4 min</text></svg><p><b>4. The match.</b> The nearest suitable driver is assigned, with a price and an ETA predicted by ML models.</p></div>
+</div>
+
+<div class="stats">
+<div class="stat"><b>Volume</b>millions of trips and GPS pings daily</div>
+<div class="stat"><b>Velocity</b>driver locations update every few seconds</div>
+<div class="stat"><b>Variety</b>GPS, payments, maps, weather, events</div>
+</div>
+
+<h2>The problem</h2>
+<p>A ride-hailing marketplace must balance drivers and riders <em>by place and by minute</em>. Too few cars in a busy area means long waits and lost riders. Too many means idle drivers. The answer changes block by block, so only big data tools can keep up.</p>
+
+<h2>The data pipeline</h2>
+<div class="card">
+<div class="steps"><span>Phones &amp; GPS</span><i>→</i><span>Streaming (Kafka)</span><i>→</i><span>Data lake (HDFS)</span><i>→</i><span>Processing (Spark, Hive)</span><i>→</i><span>ML models</span><i>→</i><span>Maps &amp; dashboards</span></div>
+<div class="cap">Simplified, based on tools Uber has described publicly (Kafka, Hadoop, Spark, Hive, Presto, Apache Hudi, Michelangelo ML platform).</div>
+</div>
+
+<h2>The geospatial twist: hexagons, not squares</h2>
+<p>Raw GPS points are useless until grouped into areas. Uber open-sourced <b>H3</b>, a grid that divides the Earth into hexagons at multiple resolutions. Every neighbor of a hexagon is the same distance away, which makes smoothing demand across neighbors fair. Surge pricing and supply balancing work on these cells.</p>
+<div class="card"><div id="hex"></div><div class="cap">Illustrative demand heatmap (simulated data, not Uber’s). Darker = higher demand. Hotspots: business district, railway station, airport.</div></div>
+
+<h2>Demand has a rhythm</h2>
+<div class="card scroll"><div id="bars1"></div><div class="cap">Illustrative hourly demand index (simulated). Orange bars are commute peaks.</div></div>
+
+<h2>From insight to decision</h2>
+<div class="card scroll"><table>
+<tr><th>Insight</th><th>Decision</th></tr>
+<tr><td>Demand spikes in a cell and its neighbors</td><td>Dynamic pricing nudges drivers toward it</td></tr>
+<tr><td>Predictable hourly and weekly patterns</td><td>Forecast demand, pre-position drivers</td></tr>
+<tr><td>Live traffic plus historical trips</td><td>More accurate ETAs and routes</td></tr>
+<tr><td>Odd location or payment behavior</td><td>Fraud and safety flags</td></tr>
+</table></div>
+
+<div class="take"><h2 style="margin-top:.6em">Key takeaways</h2><ul>
+<li>Uber’s edge is turning streaming location data into real-time decisions.</li>
+<li>Gridding space with H3 makes demand measurable and comparable.</li>
+<li>Challenges: location privacy, GPS errors in dense areas, and fairness of dynamic pricing.</li></ul></div>
+<p class="meta" style="margin-top:1.5em"><a href="#crime" style="color:var(--acc)">Next: the same spatial thinking applied to crime hotspots →</a></p>
+</section>
+
+<!-- ============ PAGE 2: CRIME ============ -->
+<section class="page" id="p-crime">
+<div class="tag">Use Case 2 · Geospatial Analytics (QGIS)</div>
+<h1>Where Does Crime Cluster? Mapping Hotspots with Geospatial Big Data</h1>
+<div class="meta">By [Your Name] · [Course / Roll No.] · Nov 2026</div>
+<p class="lead">A city records thousands of incidents every month, but a spreadsheet of addresses cannot tell you <em>where</em> to act. Turn the same rows into a map, and patterns appear that no table can show.</p>
+
+<h2>The story in 4 frames</h2>
+<div class="story">
+<div class="panel"><svg viewBox="0 0 240 140"><rect class="bg" width="240" height="140"/><polygon class="m" points="28,62 70,32 112,62"/><rect class="o" x="38" y="62" width="64" height="58"/><rect class="a" x="62" y="88" width="16" height="32"/><polygon class="b" points="175,38 208,96 142,96"/><text class="t" x="175" y="90" style="fill:#fff;font-size:22px">!</text><path class="l" d="M142 40l-10-8M208 40l10-8M175 24v-10"/></svg><p><b>1. Reports pile up.</b> Ravi, a city analyst, receives 100,000 incident records: type, time and an address.</p></div>
+<div class="panel"><svg viewBox="0 0 240 140"><rect class="bg" width="240" height="140"/><rect class="o" x="14" y="20" width="84" height="100" rx="6"/><path class="l" d="M26 42h60M26 58h48M26 74h56M26 90h40"/><text class="t" x="56" y="110" style="font-size:9px">12 Main St, 21:40</text><path class="l" d="M104 70h26"/><rect class="o" x="136" y="20" width="92" height="100" rx="6"/><path class="l" d="M136 60h92M136 90h92M166 20v100M200 20v100" opacity=".4"/><path class="b" d="M182 52a12 12 0 0 1 12 12c0 10-12 24-12 24s-12-14-12-24a12 12 0 0 1 12-12z"/><circle class="bg" cx="182" cy="64" r="4"/></svg><p><b>2. Addresses become points.</b> Geocoding converts each address into latitude and longitude on the map.</p></div>
+<div class="panel"><svg viewBox="0 0 240 140"><rect class="bg" width="240" height="140"/><circle class="b" cx="100" cy="68" r="46" opacity=".12"/><circle class="b" cx="100" cy="68" r="30" opacity=".18"/><circle class="b" cx="100" cy="68" r="14" opacity=".3"/><circle class="b" cx="98" cy="64" r="4"/><circle class="b" cx="108" cy="72" r="4"/><circle class="b" cx="90" cy="76" r="4"/><circle class="b" cx="112" cy="58" r="4"/><circle class="b" cx="94" cy="54" r="4"/><circle class="b" cx="178" cy="100" r="3"/><circle class="b" cx="30" cy="30" r="3"/><circle class="b" cx="200" cy="34" r="3"/><circle class="b" cx="40" cy="108" r="3"/><circle class="b" cx="160" cy="26" r="3"/><circle class="b" cx="214" cy="80" r="3"/></svg><p><b>3. A hotspot appears.</b> Thousands of dots become a heat surface. A small area shows far more incidents than the rest.</p></div>
+<div class="panel"><svg viewBox="0 0 240 140"><rect class="bg" width="240" height="140"/><path class="a" d="M120 18l42 14v34c0 26-18 42-42 52-24-10-42-26-42-52V32z"/><path class="l" style="stroke:var(--bg)" d="M100 68l14 14 26-28"/><path class="l" d="M30 122V54M30 54h14"/><circle class="b" cx="46" cy="54" r="8"/><path class="l" d="M202 122V54M202 54h-14"/><circle class="b" cx="186" cy="54" r="8"/></svg><p><b>4. Action follows data.</b> Patrols, better street lighting and community programs are focused where the map says they matter.</p></div>
+</div>
+
+<h2>Why this is a big data problem</h2>
+<p>Cities log incidents for years across many systems, each with messy addresses, different time formats and missing coordinates. Managing, cleaning and joining this data comes first. Mapping it comes second. Crime also concentrates: studies of urban policing repeatedly find that a small share of streets accounts for a large share of incidents, which is exactly why hotspot maps are useful. Agencies such as Chicago and New York police publish open datasets, and Delhi Police has used a crime mapping platform (CMAPS) for similar analysis.</p>
+
+<h2>One dataset, three views</h2>
+<div class="card">
+<div class="btns" id="btns"><button data-k="p" class="on">Points</button><button data-k="g">Grid count</button><button data-k="h">Heat</button></div>
+<div id="cmap"></div>
+<div class="cap">Illustrative simulated incidents (not real crime data). The same points shown three ways, as in QGIS: raw points, point count per grid cell, and a kernel-density style heat surface.</div>
+</div>
+
+<h2>When does it happen?</h2>
+<div class="card scroll"><div id="bars2"></div><div class="cap">Illustrative hourly incident index (simulated). Orange bars mark the late-evening peak. Time filters like this are ideal in a Power BI or Tableau dashboard beside the map.</div></div>
+
+<h2>My QGIS workflow</h2>
+<ol>
+<li><b>Load:</b> add the incident CSV as a Delimited Text layer using longitude and latitude (EPSG:4326).</li>
+<li><b>Clean:</b> remove rows with missing or out-of-city coordinates, and standardize date and time fields.</li>
+<li><b>Reproject:</b> convert to a metric CRS (such as UTM) so cell sizes and distances are accurate.</li>
+<li><b>Aggregate:</b> create a grid, then use <i>Count Points in Polygon</i> to get incidents per cell.</li>
+<li><b>Visualize:</b> style with graduated colors, and try Heatmap (Kernel Density Estimation) for a smooth surface.</li>
+<li><b>Share:</b> export the grid table to Power BI or Tableau for hour, day and crime-type filters.</li>
+</ol>
+
+<h2>From insight to decision</h2>
+<div class="card scroll"><table>
+<tr><th>Insight</th><th>Decision</th></tr>
+<tr><td>Persistent hotspot around a market and bus stand</td><td>Targeted patrols and visible policing</td></tr>
+<tr><td>Incidents peak late evening</td><td>Shift staffing and lighting schedules</td></tr>
+<tr><td>Dark, poorly lit lanes score high</td><td>Prioritize street lighting repairs</td></tr>
+</table></div>
+
+<h2>Handle with care</h2>
+<ul>
+<li><b>Biased data:</b> more patrols mean more recorded incidents, which can create a feedback loop. Maps show <em>reports</em>, not the full truth.</li>
+<li><b>Grid size matters:</b> changing cell size can change the hotspot (the Modifiable Areal Unit Problem), so test several sizes.</li>
+<li><b>Privacy and fairness:</b> avoid targeting individuals or neighborhoods unfairly, and show uncertainty.</li>
+</ul>
+
+<div class="take"><h2 style="margin-top:.6em">Key takeaways</h2><ul>
+<li>Geocoding and aggregation turn address lists into decisions.</li>
+<li>QGIS handles the spatial work, and Power BI or Tableau adds time-based exploration.</li>
+<li>Good analysts show the map and its limits.</li></ul></div>
+<p class="meta" style="margin-top:1.5em"><a href="#uber" style="color:var(--acc)">← Back to Page 1: Uber use case</a></p>
+</section>
+
+<footer>Sources: Uber Engineering blog (H3, Hudi, Michelangelo); public open-data portals (Chicago, NYC). All charts and maps are illustrative simulations made for this assignment. Tools: QGIS, Power BI, Tableau.</footer>
+</main>
+
+<script>
+(function(){
+function route(){var p=location.hash==='#crime'?'crime':'uber';
+ ['uber','crime'].forEach(function(k){document.getElementById('p-'+k).classList.toggle('on',k===p);document.getElementById('n-'+k).classList.toggle('on',k===p)});
+ document.title=p==='crime'?'Crime Hotspot Mapping with Geospatial Big Data':'How Uber Turns Location Data into Decisions';window.scrollTo(0,0)}
+window.addEventListener('hashchange',route);route();
+
+function hexPts(cx,cy,r){var a=[];for(var i=0;i<6;i++){var t=Math.PI/180*(60*i-30);a.push((cx+r*Math.cos(t)).toFixed(1)+','+(cy+r*Math.sin(t)).toFixed(1))}return a.join(' ')}
+// storyboard hex flower
+var f=document.getElementById('flower'),r=19,w=Math.sqrt(3)*r,
+ cells=[[0,0,1,'b'],[w,0,.55,'a'],[-w,0,.3,'a'],[w/2,1.5*r,.7,'a'],[-w/2,1.5*r,.2,'a'],[w/2,-1.5*r,.45,'a'],[-w/2,-1.5*r,.15,'a']],h='';
+cells.forEach(function(c){h+='<polygon points="'+hexPts(120+c[0],70+c[1],r-1.5)+'" class="'+c[3]+'" fill-opacity="'+c[2]+'"/>'});
+h+='<circle class="m" cx="120" cy="70" r="5"/><text class="t" x="120" y="132">Surge zone</text>';f.insertAdjacentHTML('beforeend',h);
+
+// Uber hex heatmap
+var cols=14,rows=9,R=22,W=Math.sqrt(3)*R,hot=[[3,2,1],[9,5,.9],[12,1.5,.7]],s='<svg viewBox="0 0 '+(cols*W+W/2+10)+' '+(rows*R*1.5+R+10)+'" role="img" aria-label="Hexagonal demand heatmap">';
+for(var y=0;y<rows;y++)for(var x=0;x<cols;x++){var cx=x*W+(y%2?W:W/2)+5,cy=y*R*1.5+R+5,v=0;
+ hot.forEach(function(p){var dx=x+(y%2?.5:0)-p[0],dy=(y-p[1])*.9;v+=p[2]*Math.exp(-(dx*dx+dy*dy)/6)});
+ v=Math.min(1,v+((x*7+y*13)%5)/60);
+ s+='<polygon points="'+hexPts(cx,cy,R)+'" fill="var(--acc)" fill-opacity="'+(.08+v*.92).toFixed(2)+'" stroke="var(--bg)" stroke-width="1.5"/>'}
+document.getElementById('hex').innerHTML=s+'</svg>';
+
+// bar charts
+function bars(id,d,thr,col){var bw=24,BH=170,o='<svg viewBox="0 0 620 '+(BH+36)+'" style="min-width:520px" role="img" aria-label="Hourly index">';
+ d.forEach(function(v,i){var hh=v/100*BH;o+='<rect x="'+(i*bw+10)+'" y="'+(BH-hh+6)+'" width="'+(bw-6)+'" height="'+hh+'" rx="3" fill="'+(v>thr?'var(--acc2)':'var(--'+col+')')+'"/>';
+ if(i%3===0)o+='<text x="'+(i*bw+10+(bw-6)/2)+'" y="'+(BH+24)+'" text-anchor="middle" font-size="11" font-family="system-ui,sans-serif" fill="var(--mut)">'+i+':00</text>'});
+ document.getElementById(id).innerHTML=o+'</svg>'}
+bars('bars1',[8,5,4,3,4,10,28,62,88,55,40,42,50,48,44,46,58,84,95,70,52,38,24,14],80,'acc');
+bars('bars2',[55,48,40,28,18,12,10,14,20,24,28,32,36,38,40,44,52,62,74,86,96,90,76,64],80,'acc');
+
+// crime map
+var seed=7;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
+var MW=600,MH=360,cs=40,pts=[];
+[[150,110,34,70],[430,250,30,50],[300,170,22,26]].forEach(function(c){for(var i=0;i<c[3];i++)pts.push([c[0]+(rnd()+rnd()+rnd()-1.5)*c[2]*1.6,c[1]+(rnd()+rnd()+rnd()-1.5)*c[2]*1.6])});
+for(i=0;i<45;i++)pts.push([rnd()*MW,rnd()*MH]);
+var st='<g stroke="var(--line)" stroke-width="6" fill="none"><path d="M0 110H600M0 250H600M150 0V360M430 0V360M300 0V360"/></g>',
+ P='<g id="L-p">',G='<g id="L-g" style="display:none">',H='<g id="L-h" style="display:none">',cnt={},mx=1;
+pts.forEach(function(p){if(p[0]<0||p[1]<0||p[0]>=MW||p[1]>=MH)return;P+='<circle cx="'+p[0].toFixed(0)+'" cy="'+p[1].toFixed(0)+'" r="3.5" fill="var(--acc2)" fill-opacity=".85"/>';H+='<circle cx="'+p[0].toFixed(0)+'" cy="'+p[1].toFixed(0)+'" r="34" fill="var(--acc2)" fill-opacity=".09"/>';var k=Math.floor(p[0]/cs)+'_'+Math.floor(p[1]/cs);cnt[k]=(cnt[k]||0)+1;mx=Math.max(mx,cnt[k])});
+for(var k in cnt){var q=k.split('_');G+='<rect x="'+q[0]*cs+'" y="'+q[1]*cs+'" width="'+cs+'" height="'+cs+'" fill="var(--acc2)" fill-opacity="'+(.12+.88*cnt[k]/mx).toFixed(2)+'" stroke="var(--bg)"/>'}
+document.getElementById('cmap').innerHTML='<svg viewBox="0 0 '+MW+' '+MH+'" role="img" aria-label="Simulated crime incident map"><rect width="'+MW+'" height="'+MH+'" rx="8" fill="var(--bg)"/>'+st+G+'</g>'+H+'</g>'+P+'</g></svg>';
+document.getElementById('btns').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+ [].forEach.call(this.children,function(x){x.classList.toggle('on',x===b)});
+ ['p','g','h'].forEach(function(z){document.getElementById('L-'+z).style.display=z===b.dataset.k?'':'none'})});
+})();
+</script>
+</body>
+</html>
